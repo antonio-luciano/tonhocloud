@@ -5,7 +5,7 @@ Este repositório será o meu (nosso 😉) "canivete suíço" digital — um esp
 
 Aqui você vai encontrar:
 
-. Scripts que resolvem problemas antes do café esfriar
+. Scripts que resolvem problemas antes do café esfriar<br>
 . Dicas práticas que não precisam de 15 abas do Stack Overflow abertas
 . Automatizações que poupam tempo (e paciência)
 . Ideias que surgem no caos e viram soluções reutilizáveis
