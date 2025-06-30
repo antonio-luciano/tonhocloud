@@ -1,0 +1,43 @@
+#==================================
+# DEFINIR TEMPO DURAÇÃO DA ATIVAÇÃO
+#==================================
+
+# Importar os módulos necessários
+Import-Module Microsoft.Graph.Identity.SignIns
+
+# Autenticar no Microsoft Graph
+# Permissões para conectar no MS Graph e modificar configurações dos grupos no PIM
+Connect-MgGraph -Scopes "Group.ReadWrite.All", "User.Read.All", "PrivilegedAccess.ReadWrite.AzureADGroup", "RoleManagementPolicy.Read.AzureADGroup", "RoleManagementPolicy.ReadWrite.AzureADGroup", "RoleManagementPolicy.ReadWrite.AzureADGroup"
+
+# Definir uma lista de IDs de políticas de gerenciamento de funções unificadas
+$unifiedRoleManagementPolicyIds = @(
+	"Group_df63ec7c-bf3b-4bf2-961d-d3408d70e1fd_defedbdc-da93-4c81-9e9c-c7fb852ff13f"
+)
+
+# Definir a Rule que será utilizada
+$unifiedRoleManagementPolicyRuleId = "Expiration_EndUser_Assignment"
+
+# Definir os parâmetros de Settings do Grupo
+$params01 = @{
+	"@odata.type" = "#microsoft.graph.unifiedRoleManagementPolicyExpirationRule"
+	id = "Expiration_EndUser_Assignment"
+	isExpirationRequired = $true
+	maximumDuration = "PT3H"
+	target = @{
+		"@odata.type" = "microsoft.graph.unifiedRoleManagementPolicyRuleTarget"
+		caller = "EndUser"
+		operations = @(
+		"All"
+	)
+	level = "Assignment"
+	inheritableSettings = @()
+	enforcedSettings = @()
+}
+}
+
+# Para cada ID de política de gerenciamento de funções unificadas na lista, aplicar as configurações
+foreach ($policyId in $unifiedRoleManagementPolicyIds) {
+
+    # Executar comando para atualizar os parâmetros do grupo
+    Update-MgPolicyRoleManagementPolicyRule -UnifiedRoleManagementPolicyId $policyId -UnifiedRoleManagementPolicyRuleId $unifiedRoleManagementPolicyRuleId -BodyParameter $params01
+}

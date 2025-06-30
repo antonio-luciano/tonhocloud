@@ -1,0 +1,44 @@
+#===============================================
+# HABILITAR USO DO MFA E SOLICITAR JUSTIFICATIVA
+#===============================================
+
+# Importar os módulos necessários
+Import-Module Microsoft.Graph.Identity.SignIns
+
+# Autenticar no Microsoft Graph
+# Permissões para conectar no MS Graph e modificar configurações dos grupos no PIM
+Connect-MgGraph -Scopes "Group.ReadWrite.All", "User.Read.All", "PrivilegedAccess.ReadWrite.AzureADGroup", "RoleManagementPolicy.Read.AzureADGroup", "RoleManagementPolicy.ReadWrite.AzureADGroup", "RoleManagementPolicy.ReadWrite.AzureADGroup"
+
+# Definir uma lista de IDs de políticas de gerenciamento de funções unificadas
+$unifiedRoleManagementPolicyIds = @(
+    "Group_a1306349-f08c-4bfd-b28f-e107c6950b2c_9fc32a4e-ef4e-4601-a979-88f332e48b6e"
+)
+
+# Definir a Rule que será utilizada
+$unifiedRoleManagementPolicyRuleId = "Enablement_EndUser_Assignment"
+
+# Definir os parâmetros de Settings do Grupo
+$params02 = @{
+    "@odata.type" = "#microsoft.graph.unifiedRoleManagementPolicyEnablementRule"
+    id = "Enablement_EndUser_Assignment"
+    enabledRules = @(
+        "Justification"
+    )
+    target = @{
+        "@odata.type" = "microsoft.graph.unifiedRoleManagementPolicyRuleTarget"
+        caller = "EndUser"
+        operations = @(
+            "All"
+        )
+        level = "Assignment"
+        inheritableSettings = @()
+        enforcedSettings = @()
+    }
+}
+
+# Para cada ID de política de gerenciamento de funções unificadas na lista, aplicar as configurações
+foreach ($policyId in $unifiedRoleManagementPolicyIds) {
+
+    # Executar comando para atualizar os parâmetros do grupo
+    Update-MgPolicyRoleManagementPolicyRule -UnifiedRoleManagementPolicyId $policyId -UnifiedRoleManagementPolicyRuleId $unifiedRoleManagementPolicyRuleId -BodyParameter $params02
+}

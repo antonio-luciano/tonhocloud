@@ -1,0 +1,49 @@
+#=======================================================================
+# CONFIGURA AS NOTIFICAÇÕES - Notification_Requestor_Admin_Eligibility
+#=======================================================================
+
+# Importar os módulos necessários
+Import-Module Microsoft.Graph.Identity.SignIns
+
+# Autenticar no Microsoft Graph
+# Permissões para conectar no MS Graph e modificar configurações dos grupos no PIM
+Connect-MgGraph -Scopes "Group.ReadWrite.All", "User.Read.All", "PrivilegedAccess.ReadWrite.AzureADGroup", "RoleManagementPolicy.Read.AzureADGroup", "RoleManagementPolicy.ReadWrite.AzureADGroup", "RoleManagementPolicy.ReadWrite.AzureADGroup"
+
+# Definir uma lista de IDs de políticas de gerenciamento de funções unificadas
+$unifiedRoleManagementPolicyIds = @(
+    "Group_a1306349-f08c-4bfd-b28f-e107c6950b2c_9fc32a4e-ef4e-4601-a979-88f332e48b6e",
+    "Group_cb3e61da-97cc-4696-b083-6c55789d927a_1074d009-e20c-4327-b82e-3ea7632ba7c9",
+    "Group_42a917e2-476b-488c-87b7-6795bffb5ea2_25d105df-7307-47b9-bee5-3ebb549b4069",
+    "Group_add0f410-858a-4936-9784-296cd9a26177_b1db8c37-055f-4a26-9710-1aaa2517fb96"
+)
+
+# Definir a Rule que será utilizada
+$unifiedRoleManagementPolicyRuleId = "Notification_Requestor_Admin_Eligibility"
+
+# Definir os parâmetros de Settings do Grupo
+$params10 = @{
+    "@odata.type" = "#microsoft.graph.unifiedRoleManagementPolicyNotificationRule"
+    id = "Notification_Requestor_Admin_Eligibility"
+    notificationType = "Email"
+    recipientType = "Requestor"
+    notificationLevel = "All"
+    isDefaultRecipientsEnabled = $false
+    notificationRecipients = @()
+    target = @{
+        "@odata.type" = "microsoft.graph.unifiedRoleManagementPolicyRuleTarget"
+        caller = "EndUser"
+        operations = @(
+          "all"
+        )
+        level = "Assignment"
+        inheritableSettings = @()
+        enforcedSettings = @()
+    }
+}
+
+# Para cada ID de política de gerenciamento de funções unificadas na lista, aplicar as configurações
+foreach ($policyId in $unifiedRoleManagementPolicyIds) {
+
+    # Executar comando para atualizar os parâmetros do grupo
+    Update-MgPolicyRoleManagementPolicyRule -UnifiedRoleManagementPolicyId $policyId -UnifiedRoleManagementPolicyRuleId $unifiedRoleManagementPolicyRuleId -BodyParameter $params10
+}
