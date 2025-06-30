@@ -6,9 +6,9 @@ Este repositório será o meu (nosso 😉) "canivete suíço" digital — um esp
 Aqui você vai encontrar:
 
 . Scripts que resolvem problemas antes do café esfriar<br>
-. Dicas práticas que não precisam de 15 abas do Stack Overflow abertas
-. Automatizações que poupam tempo (e paciência)
-. Ideias que surgem no caos e viram soluções reutilizáveis
+. Dicas práticas que não precisam de 15 abas do Stack Overflow abertas<br>
+. Automatizações que poupam tempo (e paciência)<br>
+. Ideias que surgem no caos e viram soluções reutilizáveis<br>
 
 Sinta-se à vontade para explorar, usar, adaptar e — por que não? — contribuir também!
 Esse espaço é vivo e vai crescendo conforme o tempo e os desafios aparecem.
